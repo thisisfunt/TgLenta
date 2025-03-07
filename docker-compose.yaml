@@ -1,0 +1,20 @@
+services:
+  nginx:
+    build: nginx_server
+    ports:
+      - "8080:80"
+  postgres:
+    image: postgres
+    restart: always
+    shm_size: 512mb
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: lenta
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - "8081:8080"
+  golang:
+    build: golang
