@@ -5,7 +5,6 @@ services:
       - "8080:80"
   postgres:
     image: postgres
-    restart: always
     shm_size: 512mb
     environment:
       POSTGRES_USER: postgres
@@ -13,8 +12,10 @@ services:
       POSTGRES_DB: lenta
   adminer:
     image: adminer
-    restart: always
     ports:
       - "8081:8080"
   golang:
     build: golang
+    restart: always
+    depends_on:
+      - postgres
