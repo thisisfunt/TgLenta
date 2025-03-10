@@ -36,3 +36,26 @@ func GetAllCategories() []models.Category {
 	}
 	return categories
 }
+
+func GetPostsByLastWeek() []models.Post {
+	rows, err := con.Query(`
+	SELECT p.id, p.text, p.ref, p.publication_date, c.logo_ref, c.name, c.subscribers_count, c.category_id, p.views, p.redirected, c.premium
+	FROM posts as p
+	LEFT JOIN channels as c
+	ON p.channel_id=c.id
+	WHERE p.publication_date >= CURRENT_DATE - INTERVAL '7 days';`)
+	if err != nil {
+		fmt.Println("Problem with getting posts:", err)
+		return []models.Post{}
+	}
+	posts := make([]models.Post, 0)
+	for rows.Next() {
+		post := models.Post{}
+		err := rows.Scan(&post.Id, &post.Text, &post.Ref, &post.PublicationDate, &post.LogoRef, &post.ChannelName, &post.SubscribersCount, &post.CategoryId, &post.Views, &post.Redirected, &post.IsChannelPremium)
+		if err != nil {
+			fmt.Println("Problem with getting posts:", err)
+		}
+		posts = append(posts, post)
+	}
+	return posts
+}
